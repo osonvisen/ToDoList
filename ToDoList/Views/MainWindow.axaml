@@ -1,0 +1,140 @@
+<Window xmlns:converters="clr-namespace:ToDoList.Converters"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ToDoList.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="ToDoList.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="ToDoList"
+        Width="500"
+        Height="600">
+    
+    <Window.Resources>
+        <converters:BooleanNegationConverter x:Key="BooleanNegationConverter"/>
+    </Window.Resources>
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+    
+    <StackPanel
+        Margin="20">
+        <!-- Overskrift -->
+        <StackPanel>
+            <TextBlock 
+                Text="ToDo-liste"
+                FontSize="32"
+                Margin="0, 20, 0, 20"
+                />
+        </StackPanel>
+        
+        <!-- Plass til input-linjen -->
+        <Grid 
+            ColumnDefinitions="*, Auto"
+            Margin="0, 5"
+            >
+            <TextBox
+                Margin="0, 0, 5, 0"
+                Grid.Column="0"
+                Text="Legg til oppgave" />
+            <Button
+                Grid.Column="1"
+                Content="Legg til"
+                />
+        </Grid>
+        
+        <!-- Viser frem listen vår -->
+        <StackPanel>
+            <ListBox ItemsSource="{Binding Items}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="Auto, *, Auto, Auto, Auto, Auto">
+                            <CheckBox Grid.Column="0" IsChecked="{Binding IsDone}" />
+                            <!-- Vi endrer fra Block til Box når redigeringsknappen trykkes -->
+                            <Grid
+                                Grid.Column="1">
+                                <TextBox
+                                    Text="{Binding Text}"
+                                    FontSize="20"
+                                    VerticalAlignment="Center"
+                                    IsVisible="{Binding IsEditing}"
+                                />
+                                <TextBlock
+                                    Text="{Binding Text}"
+                                    FontSize="20"
+                                    VerticalAlignment="Center"
+                                    IsVisible="{Binding IsEditing, Converter={StaticResource BooleanNegationConverter}}"
+                                />
+                            </Grid>
+                            
+                            
+                            <!-- <ContentControl -->
+                            <!--     Grid.Column="1" -->
+                            <!--     Margin="10" -->
+                            <!--     VerticalAlignment="Center" -->
+                            <!--     > -->
+                            <!--     <ContentControl.Styles> -->
+                            <!--         <Style Selector="TextBlock"> -->
+                            <!--             <Setter Property="VerticalAlignment" Value="Center"></Setter> -->
+                            <!--         </Style> -->
+                            <!--     </ContentControl.Styles> -->
+                            <!--     <ControlTemplate> -->
+                            <!--         <Panel> -->
+                            <!--             <TextBox -->
+                            <!--                 Text="{Binding Text}" -->
+                            <!--                 IsVisible="{Binding isEditing}" -->
+                            <!--                 /> -->
+                            <!--             <TextBlock -->
+                            <!--                 Text="{Binding Text}" -->
+                            <!--                 IsVisible="{Binding isEditing, Converter={StaticResource InverseBoolConverter}}" -->
+                            <!--                 /> -->
+                            <!--         </Panel> -->
+                            <!--     </ControlTemplate> -->
+                            <!-- </ContentControl> -->
+                            
+                            <Button 
+                                Grid.Column="2" 
+                                Content="Rediger"
+                                Background="LightGreen"
+                                Margin="2"
+                                Click="EditButton_Click"
+                                IsVisible="{Binding IsEditing, Converter={StaticResource BooleanNegationConverter}}"
+                                />
+                            <Button 
+                                Grid.Column="3" 
+                                Content="Slett"
+                                Background="MediumVioletRed"
+                                Margin="2"
+                                Click="DeleteButton_Click"
+                                IsVisible="{Binding IsEditing, Converter={StaticResource BooleanNegationConverter}}"
+                                />
+                            <!-- Knappen vises bare når vi er i redigeringsmodus -->
+                            <Button
+                                Grid.Column="4"
+                                Content="Lagre"
+                                Background="LightBlue"
+                                Margin="2"
+                                Click="SaveButton_Click"
+                                IsVisible="{Binding IsEditing}"
+                                />
+                            <Button
+                                Grid.Column="5"
+                                Content="Avbryt"
+                                Background="LightBlue"
+                                Margin="2"
+                                Click="CancelButton_Click"
+                                IsVisible="{Binding IsEditing}"
+                                />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+    </StackPanel>
+    
+</Window>
